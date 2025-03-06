@@ -3,3 +3,11 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+@layer components {
+
+    /* Rules */
+  
+    .feedings h1 {
+      @apply text-xl font-extrabold;
+    }
+}

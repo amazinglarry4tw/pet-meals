@@ -17,7 +17,8 @@ defmodule PetMealsWeb.Router do
   scope "/", PetMealsWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    # get "/", PageController, :home
+    get "/", FeedingController, :index
   end
 
   # Other scopes may use custom stacks.
