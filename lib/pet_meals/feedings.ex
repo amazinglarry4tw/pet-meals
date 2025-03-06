@@ -3,19 +3,19 @@ defmodule PetMeals.Feedings do
 
   def list_feedings do
     [
-      %PetMeals.Feedings.Feeding{
+      %Feeding{
         id: 1,
         brand: "Fancy Feast",
         flavor: "Beef",
         portion: :half
       },
-      %PetMeals.Feedings.Feeding{
+      %Feeding{
         id: 1,
         brand: "Fancy Feast",
         flavor: "Salmon",
         portion: :full
       },
-      %PetMeals.Feedings.Feeding{
+      %Feeding{
         id: 1,
         brand: "Sheba",
         flavor: "Beef",
