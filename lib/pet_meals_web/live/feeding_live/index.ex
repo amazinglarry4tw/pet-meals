@@ -21,11 +21,21 @@ defmodule PetMealsWeb.FeedingLive.Index do
 
   def render(assigns) do
     ~H"""
+    <.button phx-click={
+      JS.toggle(
+        to: "#add_feedings",
+        in: {"ease-in-out duration-300", "opacity-0", "opacity-100"},
+        out: {"ease-in-out duration-300", "opacity-100", "opacity-0"},
+        time: 300
+      )
+    }>
+      Add Feeding
+    </.button>
     <div>
-      <.button phx-click="random">Random Feeding</.button>
+      <.button class="hidden" phx-click="random">Random Feeding</.button>
     </div>
-    <div class="add_feedings">
-      <form phx-submit="add_feeding">
+    <div id="add_feedings" class="add_feedings hidden">
+      <form phx-submit="add_feeding" phx-change="form_change">
         <div class="brand-row">
           <div class="options">
             <%= for brand <- @brands do %>
@@ -68,7 +78,21 @@ defmodule PetMealsWeb.FeedingLive.Index do
           </div>
         </div>
 
-        <button type="submit" class="submit-btn">Submit</button>
+        <button
+          type="submit"
+          class="submit-btn"
+          disabled={is_nil(@selected_brand) || is_nil(@selected_flavor) || is_nil(@selected_portion)}
+          phx-click={
+            JS.toggle(
+              to: "#add_feedings",
+              in: {"ease-in-out duration-300", "opacity-0", "opacity-100"},
+              out: {"ease-in-out duration-300", "opacity-100", "opacity-0"},
+              time: 300
+            )
+          }
+        >
+          Submit
+        </button>
       </form>
     </div>
 
@@ -121,6 +145,20 @@ defmodule PetMealsWeb.FeedingLive.Index do
 
   def handle_event("select_portion", %{"portion" => portion}, socket) do
     {:noreply, assign(socket, :selected_portion, portion)}
+  end
+
+  def handle_event(
+        "form_change",
+        %{"brand" => brand, "flavor" => flavor, "portion" => portion},
+        socket
+      ) do
+    socket =
+      socket
+      |> assign(:selected_brand, (brand == "" && nil) || brand)
+      |> assign(:selected_flavor, (flavor == "" && nil) || flavor)
+      |> assign(:selected_portion, (portion == "" && nil) || portion)
+
+    {:noreply, socket}
   end
 
   def handle_event("add_feeding", _params, socket) do
