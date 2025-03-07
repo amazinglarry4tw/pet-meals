@@ -10,13 +10,13 @@ defmodule PetMeals.Feedings do
         portion: :half
       },
       %Feeding{
-        id: 1,
+        id: 2,
         brand: "Fancy Feast",
         flavor: "Salmon",
         portion: :full
       },
       %Feeding{
-        id: 1,
+        id: 3,
         brand: "Sheba",
         flavor: "Beef",
         portion: :quarter
@@ -24,15 +24,27 @@ defmodule PetMeals.Feedings do
     ]
   end
 
-  def create_random_feeding do
+  def create_random_feeding(feedings) do
+    next_id =
+      feedings
+      |> Enum.map(& &1.id)
+      |> Enum.max()
+      |> Kernel.+(1)
+
     brands = ["Fancy Feast", "Sheba", "Blue Buffalo"]
     portions = [:quarter, :half, :full]
 
     %Feeding{
-      id: 1,
+      id: next_id,
       brand: Enum.random(brands),
       flavor: ~w(Beef Salmon Chicken) |> Enum.random(),
       portion: Enum.random(portions)
     }
+  end
+
+  def create_feeding(%Feeding{}) do
+  end
+
+  def create_feeding(_) do
   end
 end

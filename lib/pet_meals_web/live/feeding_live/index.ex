@@ -4,38 +4,50 @@ defmodule PetMealsWeb.FeedingLive.Index do
   alias PetMeals.Feedings
 
   def mount(_params, _session, socket) do
-    feedings = Feedings.list_feedings()
-    {:ok, assign(socket, feedings: feedings)}
-  end
+    socket =
+      socket
+      |> assign(:page_title, "Feedings")
+      |> assign(:feedings, Feedings.list_feedings())
+      |> stream(:feedings, Feedings.list_feedings() |> Enum.reverse())
 
-  # def handle_params(_params, _uri, socket) do
-  #   socket =
-  #     socket
-  #     |> stream(:feedings, Feedings.list_feedings())
-  # end
+    {:ok, socket}
+  end
 
   def render(assigns) do
     ~H"""
-    <h1>Feedings</h1>
     <div>
       <.button phx-click="random">Random Feeding</.button>
     </div>
-    <ol>
-      <%= for feeding <- @feedings do %>
-        <li>
-          {Atom.to_string(feeding.portion) |> String.upcase()} portion of {feeding.brand} - {feeding.flavor}
-        </li>
-      <% end %>
-    </ol>
+    <.header class="mt-6">
+      {@page_title}
+    </.header>
+
+    <.table id="stream_feedings" rows={@streams.feedings}>
+      <:col :let={{_dom_id, feedings}} label="ID">
+        {feedings.id}
+      </:col>
+      <:col :let={{_dom_id, feedings}} label="Brand">
+        {feedings.brand}
+      </:col>
+      <:col :let={{_dom_id, feedings}} label="Flavor">
+        {feedings.flavor}
+      </:col>
+      <:col :let={{_dom_id, feedings}} label="Portion">
+        {feedings.portion}
+      </:col>
+    </.table>
     """
   end
 
   def handle_event("random", _params, socket) do
     socket = put_flash(socket, :info, "Something happened!")
-    random_feeding = Feedings.create_random_feeding()
-    feedings = [random_feeding | socket.assigns.feedings]
+    random_feeding = Feedings.create_random_feeding(socket.assigns.feedings)
+    updated_list = [random_feeding | socket.assigns.feedings]
 
-    socket = assign(socket, feedings: feedings)
+    socket =
+      socket
+      |> assign(:feedings, updated_list)
+      |> stream_insert(:feedings, random_feeding, at: 0)
 
     {:noreply, socket}
   end
