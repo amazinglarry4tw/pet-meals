@@ -40,7 +40,6 @@ defmodule PetMealsWeb.FeedingLive.Index do
   end
 
   def handle_event("random", _params, socket) do
-    socket = put_flash(socket, :info, "Something happened!")
     random_feeding = Feedings.create_random_feeding(socket.assigns.feedings)
     updated_list = [random_feeding | socket.assigns.feedings]
 
