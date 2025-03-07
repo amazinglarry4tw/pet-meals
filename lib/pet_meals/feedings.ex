@@ -23,4 +23,16 @@ defmodule PetMeals.Feedings do
       }
     ]
   end
+
+  def create_random_feeding do
+    brands = ["Fancy Feast", "Sheba", "Blue Buffalo"]
+    portions = [:quarter, :half, :full]
+
+    %Feeding{
+      id: 1,
+      brand: Enum.random(brands),
+      flavor: ~w(Beef Salmon Chicken) |> Enum.random(),
+      portion: Enum.random(portions)
+    }
+  end
 end

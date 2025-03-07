@@ -5,9 +5,13 @@
 /* This file is for your main application CSS */
 @layer components {
 
-    /* Rules */
+    /* Feedings */
   
     .feedings h1 {
       @apply text-xl font-extrabold;
+    }
+
+    .feedings ol {
+      @apply list-decimal list-inside space-y-2 mt-4;
     }
 }
