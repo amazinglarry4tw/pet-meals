@@ -8,6 +8,12 @@ defmodule PetMealsWeb.FeedingLive.Index do
       socket
       |> assign(:page_title, "Feedings")
       |> assign(:feedings, Feedings.list_feedings())
+      |> assign(:selected_brand, nil)
+      |> assign(:selected_flavor, nil)
+      |> assign(:selected_portion, nil)
+      |> assign(:brands, ["Sheba", "Fancy Feast", "Blue Buffalo"])
+      |> assign(:flavors, ["Beef", "Salmon", "Turkey"])
+      |> assign(:portions, ["full", "half", "quarter"])
       |> stream(:feedings, Feedings.list_feedings() |> Enum.reverse())
 
     {:ok, socket}
@@ -18,10 +24,64 @@ defmodule PetMealsWeb.FeedingLive.Index do
     <div>
       <.button phx-click="random">Random Feeding</.button>
     </div>
+    <div class="add_feedings">
+      <form phx-submit="add_feeding">
+        <div class="brand-row">
+          <div class="options">
+            <%= for brand <- @brands do %>
+              <div
+                class={["option", @selected_brand == brand && "selected"]}
+                phx-click="select_brand"
+                phx-value-brand={brand}
+              >
+                {brand}
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="flavor-row">
+          <div class="options">
+            <%= for flavor <- @flavors do %>
+              <div
+                class={["option", @selected_flavor == flavor && "selected"]}
+                phx-click="select_flavor"
+                phx-value-flavor={flavor}
+              >
+                {flavor}
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="portions-row">
+          <div class="options">
+            <%= for portion <- @portions do %>
+              <div
+                class={["option", @selected_portion == portion && "selected"]}
+                phx-click="select_portion"
+                phx-value-portion={portion}
+              >
+                {portion}
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Submit</button>
+      </form>
+    </div>
+
     <.header class="mt-6">
       {@page_title}
     </.header>
 
+    <.feeding_table streams={@streams} />
+    """
+  end
+
+  def feeding_table(assigns) do
+    ~H"""
     <.table id="stream_feedings" rows={@streams.feedings}>
       <:col :let={{_dom_id, feedings}} label="ID">
         {feedings.id}
@@ -49,5 +109,45 @@ defmodule PetMealsWeb.FeedingLive.Index do
       |> stream_insert(:feedings, random_feeding, at: 0)
 
     {:noreply, socket}
+  end
+
+  def handle_event("select_brand", %{"brand" => brand}, socket) do
+    {:noreply, assign(socket, :selected_brand, brand)}
+  end
+
+  def handle_event("select_flavor", %{"flavor" => flavor}, socket) do
+    {:noreply, assign(socket, :selected_flavor, flavor)}
+  end
+
+  def handle_event("select_portion", %{"portion" => portion}, socket) do
+    {:noreply, assign(socket, :selected_portion, portion)}
+  end
+
+  def handle_event("add_feeding", _params, socket) do
+    case {socket.assigns.selected_brand, socket.assigns.selected_flavor,
+          socket.assigns.selected_portion} do
+      {nil, _, _} ->
+        {:noreply, put_flash(socket, :error, "Please select a brand")}
+
+      {_, nil, _} ->
+        {:noreply, put_flash(socket, :error, "Please select a flavor")}
+
+      {_, _, nil} ->
+        {:noreply, put_flash(socket, :error, "Please select a portion")}
+
+      {brand, flavor, portion} ->
+        feeding = Feedings.create_feeding(socket.assigns.feedings, brand, flavor, portion)
+        feedings = [feeding | socket.assigns.feedings]
+
+        socket =
+          socket
+          |> assign(:feedings, feedings)
+          |> assign(:selected_brand, nil)
+          |> assign(:selected_flavor, nil)
+          |> assign(:selected_portion, nil)
+          |> stream_insert(:feedings, feeding, at: 0)
+
+        {:noreply, socket}
+    end
   end
 end

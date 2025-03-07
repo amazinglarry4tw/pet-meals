@@ -14,4 +14,33 @@
     .feedings ol {
       @apply list-decimal list-inside space-y-2 mt-4;
     }
+
+    .options {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .option {
+      padding: 10px 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .option.selected {
+      background-color: #4a9;
+      color: white;
+      border-color: #4a9;
+    }
+    
+    .submit-btn {
+      padding: 10px 20px;
+      background-color: #4a9;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 30px;
+    }
 }
