@@ -130,7 +130,10 @@ defmodule PetMealsWeb.FeedingLive.Index do
   def feeding_card(assigns) do
     ~H"""
     <div class="card">
-      {@feedings.id} {@feedings.brand} {@feedings.flavor} {@feedings.portion}
+      <%!-- {@feedings.id} --%>
+      {@feedings.brand}
+      {@feedings.flavor}
+      {@feedings.portion}
     </div>
     """
   end
