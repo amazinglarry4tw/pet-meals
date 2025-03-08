@@ -131,9 +131,12 @@ defmodule PetMealsWeb.FeedingLive.Index do
     ~H"""
     <div class="card">
       <%!-- {@feedings.id} --%>
-      {@feedings.brand}
-      {@feedings.flavor}
-      {@feedings.portion}
+      <span class="brand-pill" data-brand={@feedings.brand}>
+        {@feedings.brand}
+      </span>
+      <div class="py-2">
+        {@feedings.flavor} - {@feedings.portion}
+      </div>
     </div>
     """
   end
