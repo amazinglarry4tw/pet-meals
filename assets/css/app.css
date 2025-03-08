@@ -53,4 +53,8 @@
       cursor: pointer;
       margin-bottom: 30px;
     }
+
+    .feedings .card {
+      @apply bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 flex items-center justify-start text-left px-4 py-4;
+    }
 }
