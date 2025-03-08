@@ -53,4 +53,24 @@
       cursor: pointer;
       margin-bottom: 30px;
     }
+
+    .feedings .card {
+      @apply bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 flex items-center justify-start text-left mb-2 gap-2;
+    }
+
+    .feedings .card .brand-pill {
+      @apply inline-block px-2 py-1 ml-2 rounded-full text-xs text-white;
+    }
+    
+    .brand-pill[data-brand="Fancy Feast"] {
+      @apply bg-purple-500;
+    }
+    
+    .brand-pill[data-brand="Sheba"] {
+      @apply bg-red-500;
+    }
+    
+    .brand-pill[data-brand="Blue Buffalo"] {
+      @apply bg-green-500;
+    }
 }

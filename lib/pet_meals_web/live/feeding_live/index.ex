@@ -14,7 +14,7 @@ defmodule PetMealsWeb.FeedingLive.Index do
       |> assign(:brands, ["Sheba", "Fancy Feast", "Blue Buffalo"])
       |> assign(:flavors, ["Beef", "Salmon", "Turkey"])
       |> assign(:portions, ["full", "half", "quarter"])
-      |> stream(:feedings, Feedings.list_feedings() |> Enum.reverse())
+      |> stream(:feedings, Feedings.list_feedings())
 
     {:ok, socket}
   end
@@ -100,7 +100,11 @@ defmodule PetMealsWeb.FeedingLive.Index do
       {@page_title}
     </.header>
 
-    <.feeding_table streams={@streams} />
+    <%!-- <.feeding_table streams={@streams} /> --%>
+
+    <div class="feedings flex flex-col-reverse" id="feedings" phx-update="stream">
+      <.feeding_card :for={{_dom_id, feeding} <- @streams.feedings} feedings={feeding} />
+    </div>
     """
   end
 
@@ -120,6 +124,20 @@ defmodule PetMealsWeb.FeedingLive.Index do
         {feedings.portion}
       </:col>
     </.table>
+    """
+  end
+
+  def feeding_card(assigns) do
+    ~H"""
+    <div class="card">
+      <%!-- {@feedings.id} --%>
+      <span class="brand-pill" data-brand={@feedings.brand}>
+        {@feedings.brand}
+      </span>
+      <div class="py-2">
+        {@feedings.flavor} - {@feedings.portion}
+      </div>
+    </div>
     """
   end
 
@@ -183,7 +201,7 @@ defmodule PetMealsWeb.FeedingLive.Index do
           |> assign(:selected_brand, nil)
           |> assign(:selected_flavor, nil)
           |> assign(:selected_portion, nil)
-          |> stream_insert(:feedings, feeding, at: 0)
+          |> stream_insert(:feedings, feeding, at: -1)
 
         {:noreply, socket}
     end
