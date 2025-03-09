@@ -21,14 +21,17 @@ defmodule PetMealsWeb.FeedingLive.Index do
 
   def render(assigns) do
     ~H"""
-    <.button phx-click={
-      JS.toggle(
-        to: "#add_feedings",
-        in: {"ease-in-out duration-300", "opacity-0", "opacity-100"},
-        out: {"ease-in-out duration-300", "opacity-100", "opacity-0"},
-        time: 300
-      )
-    }>
+    <.button
+      class="my-2"
+      phx-click={
+        JS.toggle(
+          to: "#add_feedings",
+          in: {"ease-in-out duration-300", "opacity-0", "opacity-100"},
+          out: {"ease-in-out duration-300", "opacity-100", "opacity-0"},
+          time: 300
+        )
+      }
+    >
       Add Feeding
     </.button>
     <div>
@@ -130,16 +133,22 @@ defmodule PetMealsWeb.FeedingLive.Index do
   def feeding_card(assigns) do
     ~H"""
     <div class="card">
-      <%!-- {@feedings.id} --%>
       <span class="brand-pill" data-brand={@feedings.brand}>
         {@feedings.brand}
       </span>
       <div class="py-2">
-        {@feedings.flavor} - {@feedings.portion}
+        {display_flavor(@feedings.flavor)} - {@feedings.portion}
       </div>
     </div>
     """
   end
+
+  defp display_flavor("Beef"), do: "🥩"
+  defp display_flavor("Chicken"), do: "🍗"
+  defp display_flavor("Turkey"), do: "🦃"
+  defp display_flavor("Salmon"), do: "🐟"
+
+  defp display_flavor(_), do: "🍴"
 
   def handle_event("random", _params, socket) do
     random_feeding = Feedings.create_random_feeding(socket.assigns.feedings)

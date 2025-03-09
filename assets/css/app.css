@@ -58,6 +58,23 @@
       @apply bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 flex items-center justify-start text-left mb-2 gap-2;
     }
 
+    .feedings .flavor {
+      content: "🥩";
+      @apply inline-block px-2 py-1 ml-2
+    }
+
+    .flavor[data-flavor="Chicken"] {
+      content: "🍗";
+    }
+
+    .flavor[data-flavor="Beef"] {
+      content: "🥩";
+    }
+
+    .flavor[data-flavor="Salmon"] {
+      content: "🐟";
+    }
+
     .feedings .card .brand-pill {
       @apply inline-block px-2 py-1 ml-2 rounded-full text-xs text-white;
     }
