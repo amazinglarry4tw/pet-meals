@@ -7,19 +7,22 @@ defmodule PetMeals.Feedings do
         id: 1,
         brand: "Fancy Feast",
         flavor: "Beef",
-        portion: :half
+        portion: :half,
+        time: "March 10, 2025"
       },
       %Feeding{
         id: 2,
         brand: "Fancy Feast",
         flavor: "Salmon",
-        portion: :full
+        portion: :full,
+        time: "March 10, 2025"
       },
       %Feeding{
         id: 3,
         brand: "Sheba",
         flavor: "Beef",
-        portion: :quarter
+        portion: :quarter,
+        time: "March 10, 2025"
       }
     ]
   end
@@ -53,7 +56,8 @@ defmodule PetMeals.Feedings do
       id: next_id,
       brand: brand,
       flavor: flavor,
-      portion: portion
+      portion: portion,
+      time: DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_naive()
     }
   end
 
