@@ -58,36 +58,31 @@
       @apply bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 flex items-center justify-start text-left mb-2 gap-2;
     }
 
-    .feedings .flavor {
-      content: "🥩";
-      @apply inline-block px-2 py-1 ml-2
-    }
-
-    .flavor[data-flavor="Chicken"] {
-      content: "🍗";
-    }
-
-    .flavor[data-flavor="Beef"] {
-      content: "🥩";
-    }
-
-    .flavor[data-flavor="Salmon"] {
-      content: "🐟";
-    }
-
     .feedings .card .brand-pill {
       @apply inline-block px-2 py-1 ml-2 rounded-full text-xs text-white;
     }
-    
-    .brand-pill[data-brand="Fancy Feast"] {
-      @apply bg-purple-500;
+
+    .feedings .card .details {
+      @apply flex items-center space-x-2 mt-2 ml-2;
+    }
+
+    .feedings .card .details .detail {
+      @apply p-1
+    }
+
+    .feedings .card .timestamp {
+      @apply text-xs text-gray-500 ml-3 py-2;
     }
     
-    .brand-pill[data-brand="Sheba"] {
+    .feedings .card .brand-pill[data-brand="Fancy Feast"] {
+      @apply bg-green-500;
+    }
+    
+    .feedings .card .brand-pill[data-brand="Sheba"] {
       @apply bg-red-500;
     }
     
-    .brand-pill[data-brand="Blue Buffalo"] {
-      @apply bg-green-500;
+    .feedings .card .brand-pill[data-brand="Blue Buffalo"] {
+      @apply bg-blue-500;
     }
 }

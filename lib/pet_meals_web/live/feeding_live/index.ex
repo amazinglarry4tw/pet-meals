@@ -2,6 +2,7 @@ defmodule PetMealsWeb.FeedingLive.Index do
   use PetMealsWeb, :live_view
 
   alias PetMeals.Feedings
+  alias Calendar
 
   def mount(_params, _session, socket) do
     socket =
@@ -103,41 +104,26 @@ defmodule PetMealsWeb.FeedingLive.Index do
       {@page_title}
     </.header>
 
-    <%!-- <.feeding_table streams={@streams} /> --%>
-
     <div class="feedings flex flex-col-reverse" id="feedings" phx-update="stream">
       <.feeding_card :for={{_dom_id, feeding} <- @streams.feedings} feedings={feeding} />
     </div>
     """
   end
 
-  def feeding_table(assigns) do
-    ~H"""
-    <.table id="stream_feedings" rows={@streams.feedings}>
-      <:col :let={{_dom_id, feedings}} label="ID">
-        {feedings.id}
-      </:col>
-      <:col :let={{_dom_id, feedings}} label="Brand">
-        {feedings.brand}
-      </:col>
-      <:col :let={{_dom_id, feedings}} label="Flavor">
-        {feedings.flavor}
-      </:col>
-      <:col :let={{_dom_id, feedings}} label="Portion">
-        {feedings.portion}
-      </:col>
-    </.table>
-    """
-  end
-
   def feeding_card(assigns) do
     ~H"""
     <div class="card">
-      <span class="brand-pill" data-brand={@feedings.brand}>
-        {@feedings.brand}
-      </span>
-      <div class="py-2">
-        {display_flavor(@feedings.flavor)} - {@feedings.portion}
+      <div class="flex-1">
+        <div class="details">
+          <div class="detail">
+            {display_flavor(@feedings.flavor)}
+          </div>
+          <span class="brand-pill" data-brand={@feedings.brand}>
+            {@feedings.brand}
+          </span>
+          <div class="detail">{@feedings.portion}</div>
+        </div>
+        <div class="timestamp">{get_time()}</div>
       </div>
     </div>
     """
@@ -147,8 +133,13 @@ defmodule PetMealsWeb.FeedingLive.Index do
   defp display_flavor("Chicken"), do: "🍗"
   defp display_flavor("Turkey"), do: "🦃"
   defp display_flavor("Salmon"), do: "🐟"
-
   defp display_flavor(_), do: "🍴"
+
+  defp get_time() do
+    DateTime.utc_now()
+    |> DateTime.truncate(:second)
+    |> DateTime.to_naive()
+  end
 
   def handle_event("random", _params, socket) do
     random_feeding = Feedings.create_random_feeding(socket.assigns.feedings)
