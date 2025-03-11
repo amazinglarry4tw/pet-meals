@@ -123,7 +123,7 @@ defmodule PetMealsWeb.FeedingLive.Index do
           </span>
           <div class="detail">{@feedings.portion}</div>
         </div>
-        <div class="timestamp">{get_time()}</div>
+        <div class="timestamp">{@feedings.time}</div>
       </div>
     </div>
     """
@@ -134,12 +134,6 @@ defmodule PetMealsWeb.FeedingLive.Index do
   defp display_flavor("Turkey"), do: "🦃"
   defp display_flavor("Salmon"), do: "🐟"
   defp display_flavor(_), do: "🍴"
-
-  defp get_time() do
-    DateTime.utc_now()
-    |> DateTime.truncate(:second)
-    |> DateTime.to_naive()
-  end
 
   def handle_event("random", _params, socket) do
     random_feeding = Feedings.create_random_feeding(socket.assigns.feedings)

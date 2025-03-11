@@ -1,3 +1,3 @@
 defmodule PetMeals.Feedings.Feeding do
-  defstruct [:id, :brand, :flavor, :portion]
+  defstruct [:id, :brand, :flavor, :portion, :time]
 end
