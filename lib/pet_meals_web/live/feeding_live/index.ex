@@ -126,12 +126,6 @@ defmodule PetMealsWeb.FeedingLive.Index do
     """
   end
 
-  defp display_flavor("Beef"), do: "🥩"
-  defp display_flavor("Chicken"), do: "🍗"
-  defp display_flavor("Turkey"), do: "🦃"
-  defp display_flavor("Salmon"), do: "🐟"
-  defp display_flavor(_), do: "🍴"
-
   def handle_event("select_brand", %{"brand" => brand}, socket) do
     {:noreply, assign(socket, :selected_brand, brand)}
   end
@@ -185,4 +179,10 @@ defmodule PetMealsWeb.FeedingLive.Index do
         {:noreply, socket}
     end
   end
+
+  defp display_flavor("Beef"), do: "🥩"
+  defp display_flavor("Chicken"), do: "🍗"
+  defp display_flavor("Turkey"), do: "🦃"
+  defp display_flavor("Salmon"), do: "🐟"
+  defp display_flavor(_), do: "🍴"
 end
