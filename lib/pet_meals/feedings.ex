@@ -51,10 +51,14 @@ defmodule PetMeals.Feedings do
       brand: brand,
       flavor: flavor,
       portion: portion,
-      time: DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_naive()
+      time: get_date_time()
     }
   end
 
   def create_feeding(_) do
+  end
+
+  def get_date_time() do
+    "#{Datex.Date.today("America/New_York")} - #{Datex.Time.now("America/New_York")}"
   end
 end

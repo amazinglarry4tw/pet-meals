@@ -72,7 +72,7 @@ defmodule PetMealsWeb.FeedingLive.Index do
         )
       }
     >
-      Add Feedings
+      Add Feeding
     </.button>
     <div id="add_feedings" class="add_feedings hidden">
       <form phx-submit="add_feeding" phx-change="form_change">
