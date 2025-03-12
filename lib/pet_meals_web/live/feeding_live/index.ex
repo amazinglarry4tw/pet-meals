@@ -22,6 +22,45 @@ defmodule PetMealsWeb.FeedingLive.Index do
 
   def render(assigns) do
     ~H"""
+    <.add_feeding
+      brands={@brands}
+      flavors={@flavors}
+      portions={@portions}
+      selected_brand={@selected_brand}
+      selected_flavor={@selected_flavor}
+      selected_portion={@selected_portion}
+    />
+    <.header class="mt-6">
+      {@page_title}
+    </.header>
+
+    <div class="feedings flex flex-col-reverse" id="feedings" phx-update="stream">
+      <.feeding_card :for={{_dom_id, feeding} <- @streams.feedings} feedings={feeding} />
+    </div>
+    """
+  end
+
+  def feeding_card(assigns) do
+    ~H"""
+    <div class="card">
+      <div class="flex-1">
+        <div class="details">
+          <div class="detail">
+            {display_flavor(@feedings.flavor)}
+          </div>
+          <span class="brand-pill" data-brand={@feedings.brand}>
+            {@feedings.brand}
+          </span>
+          <div class="detail">{@feedings.portion}</div>
+        </div>
+        <div class="timestamp">{@feedings.time}</div>
+      </div>
+    </div>
+    """
+  end
+
+  def add_feeding(assigns) do
+    ~H"""
     <.button
       class="my-2"
       phx-click={
@@ -33,7 +72,7 @@ defmodule PetMealsWeb.FeedingLive.Index do
         )
       }
     >
-      Add Feeding
+      Add Feedings
     </.button>
     <div id="add_feedings" class="add_feedings hidden">
       <form phx-submit="add_feeding" phx-change="form_change">
@@ -95,33 +134,6 @@ defmodule PetMealsWeb.FeedingLive.Index do
           Submit
         </button>
       </form>
-    </div>
-
-    <.header class="mt-6">
-      {@page_title}
-    </.header>
-
-    <div class="feedings flex flex-col-reverse" id="feedings" phx-update="stream">
-      <.feeding_card :for={{_dom_id, feeding} <- @streams.feedings} feedings={feeding} />
-    </div>
-    """
-  end
-
-  def feeding_card(assigns) do
-    ~H"""
-    <div class="card">
-      <div class="flex-1">
-        <div class="details">
-          <div class="detail">
-            {display_flavor(@feedings.flavor)}
-          </div>
-          <span class="brand-pill" data-brand={@feedings.brand}>
-            {@feedings.brand}
-          </span>
-          <div class="detail">{@feedings.portion}</div>
-        </div>
-        <div class="timestamp">{@feedings.time}</div>
-      </div>
     </div>
     """
   end
