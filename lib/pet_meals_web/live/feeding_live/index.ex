@@ -42,18 +42,20 @@ defmodule PetMealsWeb.FeedingLive.Index do
 
   def feeding_card(assigns) do
     ~H"""
-    <div class="card">
-      <div class="flex-1">
-        <div class="details">
-          <div class="detail">
-            {display_flavor(@feeding.flavor)}
+    <div class="relative">
+      <div class="card" phx-click="show_options" id={@dom_id} phx-value-id={@feeding.id}>
+        <div class="flex-1">
+          <div class="details">
+            <div class="detail">
+              {display_flavor(@feeding.flavor)}
+            </div>
+            <span class="brand-pill" data-brand={@feeding.brand}>
+              {@feeding.brand}
+            </span>
+            <div class="detail">{@feeding.portion}</div>
           </div>
-          <span class="brand-pill" data-brand={@feeding.brand}>
-            {@feeding.brand}
-          </span>
-          <div class="detail">{@feeding.portion}</div>
+          <div class="timestamp">{@feeding.time}</div>
         </div>
-        <div class="timestamp">{@feeding.time}</div>
       </div>
     </div>
     """
@@ -138,6 +140,15 @@ defmodule PetMealsWeb.FeedingLive.Index do
     """
   end
 
+  def handle_event("show_options", %{"id" => id}, socket) do
+    socket =
+      socket
+      |> stream_insert(:feedings, %Feedings.Feeding{id: id, brand: "Blue Buffalo"}, at: :prepend)
+
+    IO.puts("User clicked on #{id}")
+    {:noreply, socket}
+  end
+
   def handle_event("select_brand", %{"brand" => brand}, socket) do
     {:noreply, assign(socket, :selected_brand, brand)}
   end
@@ -148,6 +159,19 @@ defmodule PetMealsWeb.FeedingLive.Index do
 
   def handle_event("select_portion", %{"portion" => portion}, socket) do
     {:noreply, assign(socket, :selected_portion, portion)}
+  end
+
+  def handle_event("show_options", %{"id" => dom_id}, socket) do
+    IO.puts("We're clicking... #{dom_id}")
+
+    socket =
+      socket
+      |> assign(:show_modal, true)
+      |> assign(:selected_feeding_id, dom_id)
+
+    IO.puts(socket.assigns.show_modal)
+
+    {:noreply, socket}
   end
 
   def handle_event(
