@@ -8,19 +8,58 @@ defmodule PetMealsWeb.FeedingLive.Index do
     socket =
       socket
       |> assign(:page_title, "Feedings")
-      |> assign(:feedings, Feedings.list_feedings())
       |> assign(:selected_brand, nil)
       |> assign(:selected_flavor, nil)
       |> assign(:selected_portion, nil)
       |> assign(:brands, ["Sheba", "Fancy Feast", "Blue Buffalo"])
       |> assign(:flavors, ["Beef", "Salmon", "Turkey"])
       |> assign(:portions, ["full", "half", "quarter"])
+      |> assign(:next_id, Feedings.list_feedings() |> Enum.count() |> Kernel.+(1))
       |> stream(:feedings, Feedings.list_feedings())
 
     {:ok, socket}
   end
 
   def render(assigns) do
+    ~H"""
+    <.add_feeding
+      brands={@brands}
+      flavors={@flavors}
+      portions={@portions}
+      selected_brand={@selected_brand}
+      selected_flavor={@selected_flavor}
+      selected_portion={@selected_portion}
+    />
+    <.header class="mt-6">
+      {@page_title}
+    </.header>
+
+    <div class="feedings flex flex-col-reverse" id="feedings" phx-update="stream">
+      <.feeding_card :for={{dom_id, feeding} <- @streams.feedings} feeding={feeding} dom_id={dom_id} />
+    </div>
+    """
+  end
+
+  def feeding_card(assigns) do
+    ~H"""
+    <div class="card">
+      <div class="flex-1">
+        <div class="details">
+          <div class="detail">
+            {display_flavor(@feeding.flavor)}
+          </div>
+          <span class="brand-pill" data-brand={@feeding.brand}>
+            {@feeding.brand}
+          </span>
+          <div class="detail">{@feeding.portion}</div>
+        </div>
+        <div class="timestamp">{@feeding.time}</div>
+      </div>
+    </div>
+    """
+  end
+
+  def add_feeding(assigns) do
     ~H"""
     <.button
       class="my-2"
@@ -33,11 +72,8 @@ defmodule PetMealsWeb.FeedingLive.Index do
         )
       }
     >
-      Add Feeding
+      Add Feedings
     </.button>
-    <div>
-      <.button class="hidden" phx-click="random">Random Feeding</.button>
-    </div>
     <div id="add_feedings" class="add_feedings hidden">
       <form phx-submit="add_feeding" phx-change="form_change">
         <div class="brand-row">
@@ -99,52 +135,7 @@ defmodule PetMealsWeb.FeedingLive.Index do
         </button>
       </form>
     </div>
-
-    <.header class="mt-6">
-      {@page_title}
-    </.header>
-
-    <div class="feedings flex flex-col-reverse" id="feedings" phx-update="stream">
-      <.feeding_card :for={{_dom_id, feeding} <- @streams.feedings} feedings={feeding} />
-    </div>
     """
-  end
-
-  def feeding_card(assigns) do
-    ~H"""
-    <div class="card">
-      <div class="flex-1">
-        <div class="details">
-          <div class="detail">
-            {display_flavor(@feedings.flavor)}
-          </div>
-          <span class="brand-pill" data-brand={@feedings.brand}>
-            {@feedings.brand}
-          </span>
-          <div class="detail">{@feedings.portion}</div>
-        </div>
-        <div class="timestamp">{@feedings.time}</div>
-      </div>
-    </div>
-    """
-  end
-
-  defp display_flavor("Beef"), do: "🥩"
-  defp display_flavor("Chicken"), do: "🍗"
-  defp display_flavor("Turkey"), do: "🦃"
-  defp display_flavor("Salmon"), do: "🐟"
-  defp display_flavor(_), do: "🍴"
-
-  def handle_event("random", _params, socket) do
-    random_feeding = Feedings.create_random_feeding(socket.assigns.feedings)
-    updated_list = [random_feeding | socket.assigns.feedings]
-
-    socket =
-      socket
-      |> assign(:feedings, updated_list)
-      |> stream_insert(:feedings, random_feeding, at: 0)
-
-    {:noreply, socket}
   end
 
   def handle_event("select_brand", %{"brand" => brand}, socket) do
@@ -186,18 +177,26 @@ defmodule PetMealsWeb.FeedingLive.Index do
         {:noreply, put_flash(socket, :error, "Please select a portion")}
 
       {brand, flavor, portion} ->
-        feeding = Feedings.create_feeding(socket.assigns.feedings, brand, flavor, portion)
-        feedings = [feeding | socket.assigns.feedings]
+        next_id = socket.assigns.next_id
+
+        feeding =
+          Feedings.create_feeding(next_id, brand, flavor, portion)
 
         socket =
           socket
-          |> assign(:feedings, feedings)
           |> assign(:selected_brand, nil)
           |> assign(:selected_flavor, nil)
           |> assign(:selected_portion, nil)
+          |> assign(:next_id, next_id + 1)
           |> stream_insert(:feedings, feeding, at: -1)
 
         {:noreply, socket}
     end
   end
+
+  defp display_flavor("Beef"), do: "🥩"
+  defp display_flavor("Chicken"), do: "🍗"
+  defp display_flavor("Turkey"), do: "🦃"
+  defp display_flavor("Salmon"), do: "🐟"
+  defp display_flavor(_), do: "🍴"
 end
