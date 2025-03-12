@@ -35,9 +35,6 @@ defmodule PetMealsWeb.FeedingLive.Index do
     >
       Add Feeding
     </.button>
-    <div>
-      <.button class="hidden" phx-click="random">Random Feeding</.button>
-    </div>
     <div id="add_feedings" class="add_feedings hidden">
       <form phx-submit="add_feeding" phx-change="form_change">
         <div class="brand-row">
@@ -134,18 +131,6 @@ defmodule PetMealsWeb.FeedingLive.Index do
   defp display_flavor("Turkey"), do: "🦃"
   defp display_flavor("Salmon"), do: "🐟"
   defp display_flavor(_), do: "🍴"
-
-  def handle_event("random", _params, socket) do
-    random_feeding = Feedings.create_random_feeding(socket.assigns.feedings)
-    updated_list = [random_feeding | socket.assigns.feedings]
-
-    socket =
-      socket
-      |> assign(:feedings, updated_list)
-      |> stream_insert(:feedings, random_feeding, at: 0)
-
-    {:noreply, socket}
-  end
 
   def handle_event("select_brand", %{"brand" => brand}, socket) do
     {:noreply, assign(socket, :selected_brand, brand)}
