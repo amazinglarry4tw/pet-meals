@@ -35,7 +35,7 @@ defmodule PetMealsWeb.FeedingLive.Index do
     </.header>
 
     <div class="feedings flex flex-col-reverse" id="feedings" phx-update="stream">
-      <.feeding_card :for={{_dom_id, feeding} <- @streams.feedings} feedings={feeding} />
+      <.feeding_card :for={{dom_id, feeding} <- @streams.feedings} feeding={feeding} dom_id={dom_id} />
     </div>
     """
   end
@@ -46,14 +46,14 @@ defmodule PetMealsWeb.FeedingLive.Index do
       <div class="flex-1">
         <div class="details">
           <div class="detail">
-            {display_flavor(@feedings.flavor)}
+            {display_flavor(@feeding.flavor)}
           </div>
-          <span class="brand-pill" data-brand={@feedings.brand}>
-            {@feedings.brand}
+          <span class="brand-pill" data-brand={@feeding.brand}>
+            {@feeding.brand}
           </span>
-          <div class="detail">{@feedings.portion}</div>
+          <div class="detail">{@feeding.portion}</div>
         </div>
-        <div class="timestamp">{@feedings.time}</div>
+        <div class="timestamp">{@feeding.time}</div>
       </div>
     </div>
     """
