@@ -105,35 +105,40 @@ defmodule PetMealsWeb.FeedingLive.Index do
     </.header>
 
     <div class="feedings flex flex-col-reverse" id="feedings" phx-update="stream">
-      <.feeding_card :for={{_dom_id, feeding} <- @streams.feedings} feedings={feeding} />
+      <.feeding_card :for={{dom_id, feeding} <- @streams.feedings} feeding={feeding} dom_id={dom_id} />
     </div>
     """
   end
 
   def feeding_card(assigns) do
     ~H"""
-    <div class="card">
+    <div class="card" phx-click="change" id={@dom_id} phx-value-id={@feeding.id}>
       <div class="flex-1">
         <div class="details">
           <div class="detail">
-            {display_flavor(@feedings.flavor)}
+            {display_flavor(@feeding.flavor)}
           </div>
-          <span class="brand-pill" data-brand={@feedings.brand}>
-            {@feedings.brand}
+          <span class="brand-pill" data-brand={@feeding.brand}>
+            {@feeding.brand}
           </span>
-          <div class="detail">{@feedings.portion}</div>
+          <div class="detail">{@feeding.portion}</div>
         </div>
-        <div class="timestamp">{@feedings.time}</div>
+        <div class="timestamp">{@feeding.time}</div>
       </div>
     </div>
     """
   end
 
-  defp display_flavor("Beef"), do: "🥩"
-  defp display_flavor("Chicken"), do: "🍗"
-  defp display_flavor("Turkey"), do: "🦃"
-  defp display_flavor("Salmon"), do: "🐟"
-  defp display_flavor(_), do: "🍴"
+  def handle_event("change", %{"id" => id}, socket) do
+    new_feeding = %Feedings.Feeding{id: id, brand: "Sheba", flavor: "Turkey", portion: :quarter}
+
+    socket =
+      socket
+      |> stream_insert(:feedings, new_feeding, at: id)
+
+    IO.puts("Clicked card with id: #{id}")
+    {:noreply, socket}
+  end
 
   def handle_event("random", _params, socket) do
     random_feeding = Feedings.create_random_feeding(socket.assigns.feedings)
@@ -200,4 +205,10 @@ defmodule PetMealsWeb.FeedingLive.Index do
         {:noreply, socket}
     end
   end
+
+  defp display_flavor("Beef"), do: "🥩"
+  defp display_flavor("Chicken"), do: "🍗"
+  defp display_flavor("Turkey"), do: "🦃"
+  defp display_flavor("Salmon"), do: "🐟"
+  defp display_flavor(_), do: "🍴"
 end
