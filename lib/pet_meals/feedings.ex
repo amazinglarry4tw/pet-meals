@@ -8,21 +8,21 @@ defmodule PetMeals.Feedings do
         brand: "Fancy Feast",
         flavor: "Beef",
         portion: :half,
-        time: "March 10, 2025"
+        time: get_date_time()
       },
       %Feeding{
         id: 2,
         brand: "Fancy Feast",
         flavor: "Salmon",
         portion: :full,
-        time: "March 10, 2025"
+        time: get_date_time()
       },
       %Feeding{
         id: 3,
         brand: "Sheba",
         flavor: "Beef",
         portion: :quarter,
-        time: "March 10, 2025"
+        time: get_date_time()
       }
     ]
   end
