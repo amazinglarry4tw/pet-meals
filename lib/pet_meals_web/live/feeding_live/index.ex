@@ -8,13 +8,13 @@ defmodule PetMealsWeb.FeedingLive.Index do
     socket =
       socket
       |> assign(:page_title, "Feedings")
-      |> assign(:feedings, Feedings.list_feedings())
       |> assign(:selected_brand, nil)
       |> assign(:selected_flavor, nil)
       |> assign(:selected_portion, nil)
       |> assign(:brands, ["Sheba", "Fancy Feast", "Blue Buffalo"])
       |> assign(:flavors, ["Beef", "Salmon", "Turkey"])
       |> assign(:portions, ["full", "half", "quarter"])
+      |> assign(:next_id, Feedings.list_feedings() |> Enum.count() |> Kernel.+(1))
       |> stream(:feedings, Feedings.list_feedings())
 
     {:ok, socket}
@@ -165,15 +165,17 @@ defmodule PetMealsWeb.FeedingLive.Index do
         {:noreply, put_flash(socket, :error, "Please select a portion")}
 
       {brand, flavor, portion} ->
-        feeding = Feedings.create_feeding(socket.assigns.feedings, brand, flavor, portion)
-        feedings = [feeding | socket.assigns.feedings]
+        next_id = socket.assigns.next_id
+
+        feeding =
+          Feedings.create_feeding(next_id, brand, flavor, portion)
 
         socket =
           socket
-          |> assign(:feedings, feedings)
           |> assign(:selected_brand, nil)
           |> assign(:selected_flavor, nil)
           |> assign(:selected_portion, nil)
+          |> assign(:next_id, next_id + 1)
           |> stream_insert(:feedings, feeding, at: -1)
 
         {:noreply, socket}

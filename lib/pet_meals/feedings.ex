@@ -45,13 +45,7 @@ defmodule PetMeals.Feedings do
     }
   end
 
-  def create_feeding(feedings, brand, flavor, portion) do
-    next_id =
-      feedings
-      |> Enum.map(& &1.id)
-      |> Enum.max()
-      |> Kernel.+(1)
-
+  def create_feeding(next_id, brand, flavor, portion) do
     %Feeding{
       id: next_id,
       brand: brand,
