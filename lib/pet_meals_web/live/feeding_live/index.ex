@@ -42,20 +42,18 @@ defmodule PetMealsWeb.FeedingLive.Index do
 
   def feeding_card(assigns) do
     ~H"""
-    <div class="relative">
-      <div class="card" phx-click="show_options" id={@dom_id} phx-value-id={@feeding.id}>
-        <div class="flex-1">
-          <div class="details">
-            <div class="detail">
-              {display_flavor(@feeding.flavor)}
-            </div>
-            <span class="brand-pill" data-brand={@feeding.brand}>
-              {@feeding.brand}
-            </span>
-            <div class="detail">{@feeding.portion}</div>
+    <div class="card" phx-click="show_options" id={@dom_id} phx-value-id={@feeding.id}>
+      <div class="flex-1">
+        <div class="details">
+          <div class="detail">
+            {display_flavor(@feeding.flavor)}
           </div>
-          <div class="timestamp">{@feeding.time}</div>
+          <span class="brand-pill" data-brand={@feeding.brand}>
+            {@feeding.brand}
+          </span>
+          <div class="detail">{@feeding.portion}</div>
         </div>
+        <div class="timestamp">{@feeding.time}</div>
       </div>
     </div>
     """
@@ -141,9 +139,11 @@ defmodule PetMealsWeb.FeedingLive.Index do
   end
 
   def handle_event("show_options", %{"id" => id}, socket) do
+    new_feeding = %Feedings.Feeding{id: id, brand: "Sheba", flavor: "Turkey", portion: :quarter}
+
     socket =
       socket
-      |> stream_insert(:feedings, %Feedings.Feeding{id: id, brand: "Blue Buffalo"}, at: :prepend)
+      |> stream_insert(:feedings, new_feeding, at: id)
 
     IO.puts("User clicked on #{id}")
     {:noreply, socket}
